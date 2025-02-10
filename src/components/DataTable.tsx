@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -10,6 +9,7 @@ import {
 } from "@tanstack/react-table";
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import * as XLSX from "xlsx";
 
 interface DataTableProps {
   searchQuery: string;
@@ -23,20 +23,20 @@ interface DataTableProps {
 }
 
 type Alumni = {
-  name: string;
-  class: string;
-  family: string;
-  region: string;
-  role: string;
-  company: string;
-  linkedin: string;
-  title: string;
+  Name: string;
+  Class: string;
+  Family: string;
+  Region: string;
+  Industry: string;
+  Company: string;
+  Linkedin: string;
+  Title: string;
 };
 
 const columnHelper = createColumnHelper<Alumni>();
 
 const columns = [
-  columnHelper.accessor("name", {
+  columnHelper.accessor("Name", {
     header: "Name",
     cell: (info) => (
       <div className="font-medium text-gray-900 dark:text-white">
@@ -44,25 +44,25 @@ const columns = [
       </div>
     ),
   }),
-  columnHelper.accessor("class", {
+  columnHelper.accessor("Class", {
     header: "Class",
   }),
-  columnHelper.accessor("family", {
+  columnHelper.accessor("Family", {
     header: "Family",
   }),
-  columnHelper.accessor("region", {
+  columnHelper.accessor("Region", {
     header: "Region",
   }),
-  columnHelper.accessor("role", {
+  columnHelper.accessor("Industry", {
     header: "Role/Industry",
   }),
-  columnHelper.accessor("company", {
+  columnHelper.accessor("Company", {
     header: "Company",
   }),
-  columnHelper.accessor("title", {
+  columnHelper.accessor("Title", {
     header: "Title",
   }),
-  columnHelper.accessor("linkedin", {
+  columnHelper.accessor("Linkedin", {
     header: "LinkedIn",
     cell: (info) => (
       <a
@@ -78,23 +78,39 @@ const columns = [
   }),
 ];
 
-// Sample data - replace with your actual data
-const data: Alumni[] = [
-  {
-    name: "John Doe",
-    class: "2023",
-    family: "Engineering",
-    region: "North America",
-    role: "Software Engineering",
-    company: "Google",
-    linkedin: "https://linkedin.com/in/johndoe",
-    title: "Senior Software Engineer",
-  },
-  // Add more sample data here
-];
-
 const DataTable = ({ searchQuery, filters }: DataTableProps) => {
   const [sorting, setSorting] = useState([]);
+  const [data, setData] = useState<Alumni[]>([]);
+
+  useEffect(() => {
+    const loadExcelData = async () => {
+      try {
+        console.log("Attempting to fetch Excel file...");
+        const response = await fetch("/alumni-data.xlsx");
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log("Excel file fetched successfully");
+
+        const arrayBuffer = await response.arrayBuffer();
+        console.log("File converted to array buffer");
+
+        const workbook = XLSX.read(arrayBuffer, { type: "array" });
+        console.log("Workbook sheets:", workbook.SheetNames);
+
+        const sheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(worksheet) as Alumni[];
+        console.log("Parsed Excel data:", jsonData);
+
+        setData(jsonData);
+      } catch (error) {
+        console.error("Detailed error loading Excel file:", error);
+      }
+    };
+
+    loadExcelData();
+  }, []);
 
   const table = useReactTable({
     data,

@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import * as XLSX from 'xlsx';
 import DataTable from "@/components/DataTable";
 import MapVisualization from "@/components/MapVisualization";
 import SearchBar from "@/components/SearchBar";
@@ -69,7 +69,10 @@ const Index = () => {
             transition={{ delay: 0.5 }}
             className="rounded-2xl bg-white dark:bg-gray-800 shadow-lg p-6"
           >
-            <DataTable searchQuery={searchQuery} filters={filters} />
+            <DataTable 
+              searchQuery={searchQuery} 
+              filters={filters} 
+            />
           </motion.div>
         </motion.div>
       </div>
