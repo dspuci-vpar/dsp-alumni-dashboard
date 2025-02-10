@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   createColumnHelper,
   flexRender,
@@ -20,6 +20,7 @@ interface DataTableProps {
     industry: string;
     company: string;
   };
+  data: Alumni[];
 }
 
 type Alumni = {
@@ -50,9 +51,6 @@ const columns = [
   columnHelper.accessor("Family", {
     header: "Family",
   }),
-  columnHelper.accessor("Region", {
-    header: "Region",
-  }),
   columnHelper.accessor("Industry", {
     header: "Role/Industry",
   }),
@@ -78,39 +76,8 @@ const columns = [
   }),
 ];
 
-const DataTable = ({ searchQuery, filters }: DataTableProps) => {
+const DataTable = ({ searchQuery, filters, data }: DataTableProps) => {
   const [sorting, setSorting] = useState([]);
-  const [data, setData] = useState<Alumni[]>([]);
-
-  useEffect(() => {
-    const loadExcelData = async () => {
-      try {
-        console.log("Attempting to fetch Excel file...");
-        const response = await fetch("/alumni-data.xlsx");
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        console.log("Excel file fetched successfully");
-
-        const arrayBuffer = await response.arrayBuffer();
-        console.log("File converted to array buffer");
-
-        const workbook = XLSX.read(arrayBuffer, { type: "array" });
-        console.log("Workbook sheets:", workbook.SheetNames);
-
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet) as Alumni[];
-        console.log("Parsed Excel data:", jsonData);
-
-        setData(jsonData);
-      } catch (error) {
-        console.error("Detailed error loading Excel file:", error);
-      }
-    };
-
-    loadExcelData();
-  }, []);
 
   const table = useReactTable({
     data,
@@ -151,10 +118,17 @@ const DataTable = ({ searchQuery, filters }: DataTableProps) => {
           ))}
         </thead>
         <tbody>
-          {table.getRowModel().rows.map((row) => (
+          {table.getRowModel().rows.map((row, index) => (
             <tr
               key={row.id}
-              className="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors"
+              className={`
+                ${
+                  index % 2 === 0
+                    ? "bg-white dark:bg-gray-800"
+                    : "bg-gray-50 dark:bg-gray-800/50"
+                }
+                hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors
+              `}
             >
               {row.getVisibleCells().map((cell) => (
                 <td
