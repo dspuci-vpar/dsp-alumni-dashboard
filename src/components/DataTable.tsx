@@ -8,18 +8,10 @@ import {
   getFilteredRowModel,
 } from "@tanstack/react-table";
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
-import * as XLSX from "xlsx";
+import { Linkedin } from "lucide-react";
 
 interface DataTableProps {
   searchQuery: string;
-  filters: {
-    class: string;
-    family: string;
-    region: string;
-    industry: string;
-    company: string;
-  };
   data: Alumni[];
 }
 
@@ -27,7 +19,6 @@ type Alumni = {
   Name: string;
   Class: string;
   Family: string;
-  Region: string;
   Industry: string;
   Company: string;
   Linkedin: string;
@@ -38,7 +29,16 @@ const columnHelper = createColumnHelper<Alumni>();
 
 const columns = [
   columnHelper.accessor("Name", {
-    header: "Name",
+    header: ({ column }) => (
+      <button
+        className="flex items-center gap-2"
+        onClick={() => column.toggleSorting()}
+      >
+        Name
+        {column.getIsSorted() === "asc" && " 🔼"}
+        {column.getIsSorted() === "desc" && " 🔽"}
+      </button>
+    ),
     cell: (info) => (
       <div className="font-medium text-gray-900 dark:text-white">
         {info.getValue()}
@@ -62,21 +62,25 @@ const columns = [
   }),
   columnHelper.accessor("Linkedin", {
     header: "LinkedIn",
-    cell: (info) => (
-      <a
-        href={info.getValue()}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-primary hover:text-primary/80 inline-flex items-center gap-1 transition-colors"
-      >
-        View Profile
-        <ExternalLink size={16} />
-      </a>
-    ),
+    cell: (info) => {
+      const linkedinUrl = info.getValue();
+      if (!linkedinUrl) return null;
+
+      return (
+        <a
+          href={linkedinUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary hover:text-primary/80 inline-flex items-center transition-colors"
+        >
+          <Linkedin size={20} />
+        </a>
+      );
+    },
   }),
 ];
 
-const DataTable = ({ searchQuery, filters, data }: DataTableProps) => {
+const DataTable = ({ searchQuery, data }: DataTableProps) => {
   const [sorting, setSorting] = useState([]);
 
   const table = useReactTable({
@@ -90,6 +94,10 @@ const DataTable = ({ searchQuery, filters, data }: DataTableProps) => {
       globalFilter: searchQuery,
     },
     onSortingChange: setSorting,
+    globalFilterFn: (row, columnId, filterValue) => {
+      const value = String(row.getValue(columnId));
+      return value.toLowerCase().includes(filterValue.toLowerCase());
+    },
   });
 
   return (
