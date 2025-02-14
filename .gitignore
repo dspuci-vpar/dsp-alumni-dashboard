@@ -30,6 +30,19 @@ dist-ssr
 .env.development.local
 .env.test.local
 .env.production.local
+.env*.local
+
+# API Keys and Secrets
+**/update_linkedin_data.py
+
+# Excel files
+*.xlsx
+*.xls
+*.csv
 
 # Vercel
 .vercel
+
+# Build
+dist/
+build/

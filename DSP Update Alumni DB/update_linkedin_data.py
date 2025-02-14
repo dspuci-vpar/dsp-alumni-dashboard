@@ -1,6 +1,11 @@
 import pandas as pd
 import requests
 import time
+import os
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 def get_linkedin_data(linkedin_url, api_key):
     url = "https://fresh-linkedin-profile-data.p.rapidapi.com/get-linkedin-profile"
@@ -72,8 +77,11 @@ def save_updated_excel(df, filename):
     df.to_excel(filename, index=False)
     print(f"Updated Excel file saved as {filename}")
 
-# Replace 'your_rapidapi_key' with your actual RapidAPI key
-api_key = '8307e5a3e2mshde2b65b2f3ad7dep10ca70jsn43147399e1a2'
+# Use environment variable instead of hardcoded API key
+api_key = os.getenv('RAPIDAPI_KEY')
+if not api_key:
+    raise ValueError("API key not found in environment variables")
+
 df = pd.read_excel('Updated_FULL_DSP-PiSigma_Alumni_Database.xlsx', sheet_name='Sheet1')
 updated_df = update_excel_with_linkedin_data(df, api_key)
 save_updated_excel(updated_df, 'Updated_Updated_FULL_DSP-PiSigma_Alumni_Database.xlsx')
