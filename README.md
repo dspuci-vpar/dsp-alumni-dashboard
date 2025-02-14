@@ -1,69 +1,71 @@
-# Welcome to your Lovable project
+# DSP Alumni Database Maintenance Scripts
 
-## Project info
+This repository contains scripts to maintain and update the DSP Alumni Database with LinkedIn profile information.
 
-**URL**: https://lovable.dev/projects/32cb0f1a-ab7e-44b1-966b-3cc7314bb132
+## Setup
 
-## How can I edit this code?
+1. **Install Python Requirements**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-There are several ways of editing your application.
+2. **Environment Setup**
+   - Create a `.env` file in the `update-alumni-script` directory
+   - Add your RapidAPI key:
+     ```
+     RAPIDAPI_KEY=your_api_key_here
+     ```
+   - Get your API key from [RapidAPI's LinkedIn Profile Data API](https://rapidapi.com/freshdata-freshdata-default/api/fresh-linkedin-profile-data/playground)
 
-**Use Lovable**
+3. **Excel File Setup**
+   - Place your Excel file named `db.xlsx` in the `update-alumni-script` directory
+   - Required columns:
+     - `Name`: Alumni name
+     - `Linkedin`: LinkedIn profile URL
+     - `Title`: Job title (will be updated by script)
+     - `Company`: Company name (will be updated by script)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/32cb0f1a-ab7e-44b1-966b-3cc7314bb132) and start prompting.
+## Usage
 
-Changes made via Lovable will be committed automatically to this repo.
+### Updating LinkedIn Data
 
-**Use your preferred IDE**
+1. Run the LinkedIn data update script:
+   ```bash
+   python update_linkedin_data.py
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. The script will:
+   - Start from the last updated row (where Title is not empty)
+   - Update job titles and companies from LinkedIn profiles
+   - Save progress automatically in case of errors
+   - Create a new file `db_updated.xlsx` with the results
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Error Handling
 
-Follow these steps:
+- The script includes rate limiting (1 request per second)
+- If API credits are exhausted, it will save progress before stopping
+- Detailed error logging is included for debugging
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+## Maintenance Tips
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+1. **API Credits**
+   - Monitor your RapidAPI usage dashboard
+   - The script will stop if credits are exhausted
+   - Consider upgrading your plan if you need more requests
 
-# Step 3: Install the necessary dependencies.
-npm i
+2. **Data Backup**
+   - Always keep a backup of `db.xlsx`
+   - The script creates `db_updated.xlsx` instead of overwriting
+   - Review changes before replacing the original file
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+3. **Troubleshooting**
+   - Check the console output for error messages
+   - Verify LinkedIn URLs are correctly formatted
+   - Ensure your API key is valid and has available credits
 
-**Edit a file directly in GitHub**
+4. **Best Practices**
+   - Run updates periodically (e.g., monthly)
+   - Verify data accuracy after updates
+   - Keep the requirements.txt updated if new dependencies are added
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/32cb0f1a-ab7e-44b1-966b-3cc7314bb132) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+## File Structure
