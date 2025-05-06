@@ -2,6 +2,52 @@
 
 This repository contains scripts to maintain and update the DSP Alumni Database with LinkedIn profile information.
 
+## Prerequisites
+
+- Node.js (v16 or higher)
+- npm (v7 or higher)
+- Python 3.8+ (for LinkedIn data updates)
+
+## Frontend Setup
+
+1. **Install Node Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Run Development Server**
+   ```bash
+   npm run dev
+   ```
+   The application will be available at `http://localhost:5173`
+
+3. **Build for Production**
+   ```bash
+   npm run build
+   ```
+
+4. **Preview Production Build**
+   ```bash
+   npm run preview
+   ```
+
+## Dependencies
+
+### Frontend Dependencies
+- React
+- React Router
+- TanStack Table
+- Recharts
+- Framer Motion
+- XLSX
+- TailwindCSS
+
+### Python Script Dependencies
+- pandas
+- requests
+- python-dotenv
+- openpyxl
+
 ## Setup
 
 1. **Install Python Requirements**
@@ -29,19 +75,19 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
 
 ### Updating LinkedIn Data Manually (Option 1)
 
-*** Best for updating small amounts of people ***
+**_ Best for updating small amounts of people _**
 
 1. Make edits to the excel file (alumni-data.xlsx) found in the public folder.
    You can do this by:
-      - Downloading the excel file
-      - Opening it in an editor (e.g. Excel, Google Sheets, etc)
-      - Updating rows/columns and or adding more people
-      - Exporting the new excel file
-      - Replacing the alumni-data.xlsx file with the updated one. Ensure that they have the same name.
+   - Downloading the excel file
+   - Opening it in an editor (e.g. Excel, Google Sheets, etc)
+   - Updating rows/columns and or adding more people
+   - Exporting the new excel file
+   - Replacing the alumni-data.xlsx file with the updated one. Ensure that they have the same name.
 
 ### Updating LinkedIn Data Using the Script (Option 2)
 
-*** Best for updating larger amounts of people ***
+**_ Best for updating larger amounts of people _**
 
 1. Run the LinkedIn data update script:
    ```bash
@@ -81,3 +127,7 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
    - Run updates periodically (e.g., every quarter)
    - Verify data accuracy after updates
    - Keep the requirements.txt updated if new dependencies are added
+
+## Deployment
+
+The application is already configured for deployment on Vercel here: https://dsp-alumni-dashboard.vercel.app/
