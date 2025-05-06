@@ -44,6 +44,7 @@ const Index = () => {
     loadExcelData();
   }, []);
 
+  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
       <div className="container mx-auto px-4 py-8">
@@ -57,7 +58,7 @@ const Index = () => {
               Delta Sigma Pi - Pi Sigma Alumni Network
             </h1>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Explore where our alumni are making an impact
+              Explore where our alumni are making an impact!
             </p>
             <div className="flex items-center justify-center gap-6">
               <a
