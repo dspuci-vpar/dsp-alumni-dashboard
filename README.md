@@ -131,3 +131,4 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
 ## Deployment
 
 The application is already configured for deployment on Vercel here: https://dsp-alumni-dashboard.vercel.app/
+# dsp-alumni-dashboard
