@@ -10,7 +10,7 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
    ```
 
 2. **Environment Setup**
-   - Create a `.env` file in the `update-alumni-script` directory
+   - Create a `.env` file in the root directory
    - Add your RapidAPI key:
      ```
      RAPIDAPI_KEY=your_api_key_here
