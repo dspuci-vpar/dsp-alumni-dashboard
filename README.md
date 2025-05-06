@@ -27,7 +27,21 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
 
 ## Usage
 
-### Updating LinkedIn Data
+### Updating LinkedIn Data Manually (Option 1)
+
+*** Best for updating small amounts of people ***
+
+1. Make edits to the excel file (alumni-data.xlsx) found in the public folder.
+   You can do this by:
+      - Downloading the excel file
+      - Opening it in an editor (e.g. Excel, Google Sheets, etc)
+      - Updating rows/columns and or adding more people
+      - Exporting the new excel file
+      - Replacing the alumni-data.xlsx file with the updated one. Ensure that they have the same name.
+
+### Updating LinkedIn Data Using the Script (Option 2)
+
+*** Best for updating larger amounts of people ***
 
 1. Run the LinkedIn data update script:
    ```bash
@@ -51,7 +65,7 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
 1. **API Credits**
    - Monitor your RapidAPI usage dashboard
    - The script will stop if credits are exhausted
-   - Consider upgrading your plan if you need more requests
+   - If you need more requests, just make new RapidAPI accounts and update the keys
 
 2. **Data Backup**
    - Always keep a backup of `db.xlsx`
@@ -64,8 +78,6 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
    - Ensure your API key is valid and has available credits
 
 4. **Best Practices**
-   - Run updates periodically (e.g., monthly)
+   - Run updates periodically (e.g., every quarter)
    - Verify data accuracy after updates
    - Keep the requirements.txt updated if new dependencies are added
-
-## File Structure
