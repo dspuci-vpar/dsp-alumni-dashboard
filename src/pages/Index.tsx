@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import * as XLSX from "xlsx";
 import DataTable from "@/components/DataTable";
 import SearchBar from "@/components/SearchBar";
@@ -6,6 +6,7 @@ import DistributionCharts from "@/components/DistributionCharts";
 import StatsSummary from "@/components/StatsSummary";
 import ThemeToggle from "@/components/ThemeToggle";
 import LoadingSkeleton from "@/components/LoadingSkeleton";
+import ExportButton from "@/components/ExportButton";
 import { Linkedin, Instagram, Globe } from "lucide-react";
 
 type Alumni = {
@@ -48,6 +49,23 @@ const Index = () => {
 
     loadExcelData();
   }, []);
+
+  // Filter data based on search query
+  const filteredData = useMemo(() => {
+    if (!searchQuery.trim()) return data;
+    
+    const query = searchQuery.toLowerCase();
+    return data.filter((alumni) => {
+      return (
+        alumni.Name?.toLowerCase().includes(query) ||
+        alumni.Class?.toLowerCase().includes(query) ||
+        alumni.Family?.toLowerCase().includes(query) ||
+        alumni.Industry?.toLowerCase().includes(query) ||
+        alumni.Company?.toLowerCase().includes(query) ||
+        alumni.Title?.toLowerCase().includes(query)
+      );
+    });
+  }, [data, searchQuery]);
 
   const socialLinks = [
     { 
@@ -132,12 +150,15 @@ const Index = () => {
             <section className="bg-neutral-100 dark:bg-neutral-900 border border-cream-200 dark:border-neutral-800">
               <div className="border-b border-cream-200 dark:border-neutral-800 px-6 py-4">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-neutral-950 dark:text-neutral-100">
-                    Alumni Directory
-                  </h2>
-                  <span className="text-sm text-taupe-500 dark:text-taupe-500 font-mono">
-                    {data.length} total
-                  </span>
+                  <div className="flex items-center gap-4">
+                    <h2 className="text-lg font-semibold text-neutral-950 dark:text-neutral-100">
+                      Alumni Directory
+                    </h2>
+                    <span className="text-sm text-taupe-500 dark:text-taupe-500 font-mono">
+                      {data.length} total
+                    </span>
+                  </div>
+                  <ExportButton data={data} filteredData={filteredData} />
                 </div>
                 <SearchBar onSearch={setSearchQuery} />
               </div>
