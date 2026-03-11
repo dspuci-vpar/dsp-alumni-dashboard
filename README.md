@@ -56,20 +56,21 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
    ```
 
 2. **Environment Setup**
-   - Create a `.env` file in the root directory
+   - Create a `.env` file in the `update-alumni-script` directory
    - Add your RapidAPI key:
      ```
      RAPIDAPI_KEY=your_api_key_here
      ```
-   - Get your API key from [RapidAPI's LinkedIn Profile Data API](https://rapidapi.com/freshdata-freshdata-default/api/fresh-linkedin-profile-data/playground)
+   - Get your API key from [RapidAPI's LinkedIn Profile Data API](https://rapidapi.com/rockapis-rockapis-default/api/fresh-linkedin-profile-data)
 
 3. **Excel File Setup**
-   - Place your Excel file named `db.xlsx` in the `update-alumni-script` directory
+   - The Excel file `alumni-data.xlsx` is located in the `public` folder
    - Required columns:
      - `Name`: Alumni name
      - `Linkedin`: LinkedIn profile URL
      - `Title`: Job title (will be updated by script)
      - `Company`: Company name (will be updated by script)
+     - `Role/Industry`: Industry category (will be updated by industry script)
 
 ## Usage
 
@@ -89,16 +90,39 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
 
 **_ Best for updating larger amounts of people _**
 
-1. Run the LinkedIn data update script:
-   ```bash
-   python update_linkedin_data.py
-   ```
+For detailed documentation, see [update-alumni-script/README.md](update-alumni-script/README.md)
 
-2. The script will:
-   - Start from the last updated row (where Title is not empty)
-   - Update job titles and companies from LinkedIn profiles
-   - Save progress automatically in case of errors
-   - Create a new file `db_updated.xlsx` with the results
+#### Quick Start for Annual Updates
+
+Navigate to the update-alumni-script directory and run:
+
+```bash
+cd update-alumni-script
+
+# Step 1: Update LinkedIn data (full refresh for annual updates)
+python update_linkedin_data.py --update-all
+
+# Step 2: Categorize industries
+python update_industry.py
+```
+
+#### Update Modes
+
+**Incremental Update** (default - only updates new/missing entries):
+```bash
+python update_linkedin_data.py
+```
+
+**Full Refresh** (recommended for annual updates - updates ALL entries):
+```bash
+python update_linkedin_data.py --update-all
+```
+
+The script will:
+- Fetch current job titles and companies from LinkedIn profiles
+- Save progress automatically if API credits run out
+- Create `UPDATED-alumni-data.xlsx` with the results
+- Then run `update_industry.py` to categorize industries and update the main file
 
 ### Error Handling
 
@@ -110,21 +134,23 @@ This repository contains scripts to maintain and update the DSP Alumni Database 
 
 1. **API Credits**
    - Monitor your RapidAPI usage dashboard
-   - The script will stop if credits are exhausted
+   - The script will stop and save progress if credits are exhausted
    - If you need more requests, just make new RapidAPI accounts and update the keys
 
 2. **Data Backup**
-   - Always keep a backup of `db.xlsx`
-   - The script creates `db_updated.xlsx` instead of overwriting
-   - Review changes before replacing the original file
+   - Always keep a backup of `alumni-data.xlsx`
+   - The script creates `UPDATED-alumni-data.xlsx` first before updating the main file
+   - Review changes before running the industry categorization script
 
 3. **Troubleshooting**
    - Check the console output for error messages
    - Verify LinkedIn URLs are correctly formatted
    - Ensure your API key is valid and has available credits
+   - If the script stops midway, it will resume from where it left off (unless using `--update-all`)
 
 4. **Best Practices**
-   - Run updates periodically (e.g., every quarter)
+   - Run full updates annually using `--update-all` flag
+   - For new alumni additions, use incremental updates (default mode)
    - Verify data accuracy after updates
    - Keep the requirements.txt updated if new dependencies are added
 

@@ -1,7 +1,6 @@
 import pandas as pd
-
-# Load the Excel file
-df = pd.read_excel('db.xlsx', sheet_name='Sheet1')
+import argparse
+import os
 
 # Define a function to categorize industries using reasoning
 def categorize_industry(job_title, company):
@@ -67,10 +66,48 @@ def categorize_industry(job_title, company):
     else:
         return "Other"  # Default fallback
 
-# Apply the reasoning function to update the Role/Industry column
-df['Role/Industry'] = df.apply(lambda row: categorize_industry(row['Title'], row['Company']), axis=1)
-
-# Save the updated DataFrame to a new Excel file
-df.to_excel('db_updated.xlsx', index=False)
-
-print("Role/Industry column updated using reasoning and saved to 'Updated_Role_Industry_Reasoning_FULL_DSP-PiSigma_Alumni_Database.xlsx'")
+if __name__ == "__main__":
+    # Parse command-line arguments
+    parser = argparse.ArgumentParser(
+        description='Categorize alumni industries based on job titles and companies',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  # Use default paths (reads from ../public/UPDATED-alumni-data.xlsx):
+  python update_industry.py
+  
+  # Use custom input/output files:
+  python update_industry.py --input custom-data.xlsx --output custom-output.xlsx
+        """
+    )
+    parser.add_argument(
+        '--input',
+        default=os.path.join('..', 'public', 'UPDATED-alumni-data.xlsx'),
+        help='Path to input Excel file (default: ../public/UPDATED-alumni-data.xlsx)'
+    )
+    parser.add_argument(
+        '--output',
+        default=os.path.join('..', 'public', 'alumni-data.xlsx'),
+        help='Path to output Excel file (default: ../public/alumni-data.xlsx)'
+    )
+    
+    args = parser.parse_args()
+    
+    print(f"Reading data from: {args.input}")
+    df = pd.read_excel(args.input, sheet_name='Sheet1')
+    print(f"Total rows in file: {len(df)}")
+    
+    # Apply the reasoning function to update the Role/Industry column
+    print("Categorizing industries based on job titles and companies...")
+    df['Role/Industry'] = df.apply(lambda row: categorize_industry(row['Title'], row['Company']), axis=1)
+    
+    # Count categorizations
+    category_counts = df['Role/Industry'].value_counts()
+    print("\nIndustry distribution:")
+    for category, count in category_counts.items():
+        print(f"  {category}: {count}")
+    
+    # Save the updated DataFrame
+    print(f"\nSaving updated data to: {args.output}")
+    df.to_excel(args.output, index=False)
+    print("✓ Role/Industry column updated successfully!")
