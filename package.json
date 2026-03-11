@@ -86,6 +86,8 @@
   },
   "optionalDependencies": {
     "@swc/core-win32-x64-msvc": "^1.7.39",
+    "@swc/core-linux-x64-gnu": "^1.7.39",
+    "@swc/core-linux-x64-musl": "^1.7.39",
     "@rollup/rollup-linux-x64-gnu": "^4.24.0"
   }
 }
