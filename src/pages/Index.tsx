@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import DataTable from "@/components/DataTable";
 import SearchBar from "@/components/SearchBar";
 import DistributionCharts from "@/components/DistributionCharts";
-import { motion } from "framer-motion";
 import StatsSummary from "@/components/StatsSummary";
+import ThemeToggle from "@/components/ThemeToggle";
+import LoadingSkeleton from "@/components/LoadingSkeleton";
 import { Linkedin, Instagram, Globe } from "lucide-react";
 
 type Alumni = {
@@ -21,9 +22,11 @@ type Alumni = {
 const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [data, setData] = useState<Alumni[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const loadExcelData = async () => {
+      setIsLoading(true);
       try {
         const response = await fetch("/alumni-data.xlsx");
         if (!response.ok) {
@@ -38,89 +41,120 @@ const Index = () => {
         setData(jsonData);
       } catch (error) {
         console.error("Error loading Excel file:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
     loadExcelData();
   }, []);
 
+  const socialLinks = [
+    { 
+      icon: Linkedin, 
+      url: "https://www.linkedin.com/company/delta-sigma-pi---pi-sigma-chapter/",
+      label: "LinkedIn"
+    },
+    { 
+      icon: Instagram, 
+      url: "https://www.instagram.com/dspuci/",
+      label: "Instagram"
+    },
+    { 
+      icon: Globe, 
+      url: "https://www.dspuci.com/",
+      label: "Website"
+    },
+  ];
   
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
-      <div className="container mx-auto px-4 py-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <header className="text-center mb-12">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white mb-2">
-              Delta Sigma Pi - Pi Sigma Alumni Network
-            </h1>
-            <p className="text-gray-600 dark:text-gray-300 mb-4">
-              Explore where our alumni are making an impact!
-            </p>
-            <div className="flex items-center justify-center gap-6">
-              <a
-                href="https://www.linkedin.com/company/delta-sigma-pi---pi-sigma-chapter/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-              >
-                <Linkedin size={24} />
-              </a>
-              <a
-                href="https://www.instagram.com/dspuci/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-              >
-                <Instagram size={24} />
-              </a>
-              <a
-                href="https://www.dspuci.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors"
-              >
-                <Globe size={24} />
-              </a>
+    <div className="min-h-screen bg-cream-100 dark:bg-neutral-950">
+      {/* Theme Toggle - Fixed position */}
+      <div className="fixed top-4 right-4 z-50">
+        <ThemeToggle />
+      </div>
+      
+      {isLoading ? (
+        <LoadingSkeleton />
+      ) : (
+        <>
+          {/* Header - Compact and functional */}
+          <header className="border-b border-cream-200 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900">
+            <div className="max-w-7xl mx-auto px-6 py-8">
+              <div className="flex items-start justify-between">
+                <div className="flex items-start gap-4">
+                  {/* Logo - Simple, no animations */}
+                  <div className="w-12 h-12 bg-neutral-950 dark:bg-neutral-100 flex items-center justify-center flex-shrink-0">
+                    <span className="text-lg font-semibold text-neutral-100 dark:text-neutral-950 font-mono">ΔΣΠ</span>
+                  </div>
+                  
+                  <div>
+                    <h1 className="text-2xl font-semibold tracking-tight text-neutral-950 dark:text-neutral-100 mb-1">
+                      Delta Sigma Pi — Pi Sigma
+                    </h1>
+                    <p className="text-sm text-taupe-700 dark:text-taupe-400">
+                      Alumni Network Dashboard
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Social Links - Minimal */}
+                <div className="flex items-center gap-2">
+                  {socialLinks.map((link) => (
+                    <a
+                      key={link.label}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="p-2 text-taupe-700 dark:text-taupe-400 hover:text-neutral-950 dark:hover:text-neutral-100 hover:bg-cream-200 dark:hover:bg-neutral-800 transition-colors duration-150"
+                      aria-label={link.label}
+                      title={link.label}
+                    >
+                      <link.icon size={18} strokeWidth={2} />
+                    </a>
+                  ))}
+                </div>
+              </div>
             </div>
           </header>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="mb-8"
-          >
+          {/* Main Content */}
+          <main className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+            {/* Stats Summary */}
             <StatsSummary data={data} />
-          </motion.div>
 
-          <div className="mb-8">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.3 }}
-              className="rounded-2xl bg-white dark:bg-gray-800 shadow-lg p-6"
-            >
+            {/* Charts Section */}
+            <section className="bg-neutral-100 dark:bg-neutral-900 border border-cream-200 dark:border-neutral-800">
               <DistributionCharts data={data} />
-            </motion.div>
-          </div>
+            </section>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="rounded-2xl bg-white dark:bg-gray-800 shadow-lg p-6"
-          >
-            <div className="mb-4">
-              <SearchBar onSearch={setSearchQuery} />
+            {/* Data Table Section */}
+            <section className="bg-neutral-100 dark:bg-neutral-900 border border-cream-200 dark:border-neutral-800">
+              <div className="border-b border-cream-200 dark:border-neutral-800 px-6 py-4">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-neutral-950 dark:text-neutral-100">
+                    Alumni Directory
+                  </h2>
+                  <span className="text-sm text-taupe-500 dark:text-taupe-500 font-mono">
+                    {data.length} total
+                  </span>
+                </div>
+                <SearchBar onSearch={setSearchQuery} />
+              </div>
+              <DataTable searchQuery={searchQuery} data={data} />
+            </section>
+          </main>
+          
+          {/* Footer - Minimal */}
+          <footer className="border-t border-cream-200 dark:border-neutral-800 mt-16">
+            <div className="max-w-7xl mx-auto px-6 py-6">
+              <p className="text-xs text-taupe-500 dark:text-taupe-500">
+                © 2024 Delta Sigma Pi - Pi Sigma Chapter
+              </p>
             </div>
-            <DataTable searchQuery={searchQuery} data={data} />
-          </motion.div>
-        </motion.div>
-      </div>
+          </footer>
+        </>
+      )}
     </div>
   );
 };
